@@ -15,7 +15,7 @@ import (
 
 	"io/ioutil"
 
-	"github.com/eoscanada/eos-go/ecc"
+	"github.com/jackami/eos-go/ecc"
 	"go.uber.org/zap"
 )
 
@@ -700,7 +700,7 @@ func (d *Decoder) ReadBlockTimestamp() (out BlockTimestamp, err error) {
 		return
 	}
 	n, err := d.ReadUint32()
-	out.Time = time.Unix(int64(n)+946684800, 0)
+	out.Time = time.Unix(int64(n/2)+946684800, 0)
 	decoderLog.Debug("read block timestamp", zap.Time("time", out.Time))
 	return
 }
