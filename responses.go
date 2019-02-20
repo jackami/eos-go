@@ -109,6 +109,8 @@ type ActionTrace struct {
 	TotalCPUUsage int            `json:"total_cpu_usage"`
 	TransactionID Checksum256    `json:"trx_id"`
 	InlineTraces  []*ActionTrace `json:"inline_traces"`
+	BlockTime     JSONTime       `json:"block_time"`
+	BlockNum      uint32         `json:"block_num"`
 }
 
 type TransactionTraceAuthSequence struct {
