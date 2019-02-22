@@ -88,6 +88,33 @@ type TransactionResp struct {
 	Traces                []ActionTrace        `json:"traces"`
 }
 
+type TransactionCustomTempResp struct {
+	ID      Checksum256 `json:"id"`
+	Receipt struct {
+		Status           TransactionStatus `json:"status"`
+		CPUUsageMicrosec int               `json:"cpu_usage_us"`
+		NetUsageWords    int               `json:"net_usage_words"`
+		//PackedTransaction TransactionWithID `json:"trx"`
+	} `json:"receipt"`
+	//Transaction           ProcessedTransaction `json:"trx"`
+	BlockTime       JSONTime `json:"block_time"`
+	BlockNum        uint32   `json:"block_num"`
+	ProducerBlockId string   `json:"producer_block_id"`
+	Elapsed         int      `json:"elapsed"`
+	NetUsage        int      `json:"net_usage"`
+	Scheduled       bool     `json:"scheduled"`
+	//LastIrreversibleBlock uint32               `json:"last_irreversible_block"`
+	Traces []ActionTrace `json:"action_traces"`
+}
+
+type TransactionCustomResp struct {
+	ID              Checksum256   `json:"id"`
+	BlockTime       JSONTime      `json:"block_time"`
+	BlockNum        uint32        `json:"block_num"`
+	ProducerBlockId string        `json:"producer_block_id"`
+	Traces          []ActionTrace `json:"action_traces"`
+}
+
 type ProcessedTransaction struct {
 	Transaction SignedTransaction `json:"trx"`
 }
