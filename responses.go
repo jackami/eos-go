@@ -447,3 +447,101 @@ type GetCurrencyStatsResp struct {
 	MaxSupply Asset       `json:"max_supply"`
 	Issuer    AccountName `json:"issuer"`
 }
+
+//////////////////////  trace parser model   ////////////////////////
+
+type TrxTraces struct {
+	TrxTraces []TrxTrace `json:"trx_traces"`
+}
+
+type TrxReceipt struct {
+	Status        TransactionStatus `json:"status"`
+	CPUUsageUs    uint32            `json:"cpu_usage_us"`
+	NetUsageWords Varuint32         `json:"net_usage_words"`
+}
+
+type TrxTrace struct {
+	Dummy        Varuint32        `json:"dummy"`
+	TrxId        Checksum256      `json:"id"`
+	Receipt      TrxReceipt       `json:"receipt"`
+	Elapsed      int64            `json:"elapsed"`
+	NetUsage     uint64           `json:"net_usage"`
+	Scheduled    bool             `json:"scheduled"`
+	Traces       []InlineTrace    `json:"action_traces"`
+	Except       ExceptOptional   `json:"except"`
+	FailedTraces TrxTraceOptional `json:"failed_traces"`
+}
+
+type InlineReceipt struct {
+	Dummy           Varuint32            `json:"dummy"`
+	Receiver        AccountName          `json:"receiver"`
+	ActionDigest    Checksum256          `json:"act_digest"`
+	GlobalSequence  uint64               `json:"global_sequence"`
+	ReceiveSequence uint64               `json:"recv_sequence"`
+	AuthSequence    []InlineAuthSequence `json:"auth_sequence"` // [["account", sequence], ["account", sequence]]
+	CodeSequence    Varuint32            `json:"code_sequence"`
+	ABISequence     Varuint32            `json:"abi_sequence"`
+}
+
+type InlineAction struct {
+	Account       AccountName       `json:"account"`
+	Name          ActionName        `json:"name"`
+	Authorization []PermissionLevel `json:"authorization,omitempty"`
+	InlineActionData
+}
+
+type InlineActionData struct {
+	HexData HexBytes `json:"hex_data,omitempty"`
+}
+
+type InlineAuthSequence struct {
+	Account  AccountName
+	Sequence uint64
+}
+
+type InlineAccountRamDelta struct {
+	Name  AccountName `json:"name"`
+	Delta int64       `json:"delta"`
+}
+
+type ExceptOptional struct {
+	Valid bool   `json:"valid"`
+	Value string `json:"value"`
+}
+
+func (e ExceptOptional) MarshalJSON() ([]byte, error) {
+	return json.Marshal([]interface{}{
+		e.Valid,
+		e.Value,
+	})
+}
+
+type TrxTraceOptional struct {
+	Valid bool      `json:"valid"`
+	//Value *TrxTrace `json:"value"`
+}
+
+type InlineTrace struct {
+	Dummy            Varuint32               `json:"dummy"`
+	Receipt          InlineReceipt           `json:"receipt"`
+	Action           *Action                 `json:"act"`
+	ContentFree      bool                    `json:"content_free"`
+	Elapsed          int64                   `json:"elapsed"`
+	Console          string                  `json:"console"`
+	AccountRamDeltas []InlineAccountRamDelta `json:"account_ram_deltas"`
+	Except           ExceptOptional          `json:"except"`
+	InlineTraces     []InlineTrace           `json:"inline_traces"`
+}
+
+type EntryHeader struct {
+	BlockNum    uint32   	`json:"block_num"` // 8 + 32 + 4 + 1
+	Dummy		uint32		`json:"dummy"`
+	BlockId     Checksum256 `json:"block_id"`
+	PayloadSize uint64      `json:"payload_size"`
+	Version     uint8       `json:"version"`
+}
+
+type EntryPayload struct {
+	TraceSize uint32
+	TraceDate []byte
+}

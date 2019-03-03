@@ -290,6 +290,25 @@ func (d *Decoder) Decode(v interface{}) (err error) {
 			return nil
 		}
 
+	case *ExceptOptional:
+		isValid, e := d.ReadBool()
+		if e != nil {
+			err = fmt.Errorf("decode: ExceptOptional isValid, %s", e)
+		}
+
+		exceptOpt := rv.Interface().(ExceptOptional)
+
+		if isValid {
+			e = d.readExceptOptional(&exceptOpt)
+			if e != nil {
+				err = fmt.Errorf("decode: ExceptOptional value, %s", e)
+				return
+			}
+		}
+
+		rv.Set(reflect.ValueOf(exceptOpt))
+		return
+
 	case **OptionalProducerSchedule:
 		isPresent, e := d.ReadByte()
 		if e != nil {
@@ -872,6 +891,19 @@ func (d *Decoder) ReadP2PMessageEnvelope() (out *Packet, err error) {
 
 	d.pos += int(out.Length)
 	return
+}
+
+func (d *Decoder) readExceptOptional(in *ExceptOptional) (err error) {
+	//in = &ExceptOptional{}
+	str, e := d.ReadString()
+	if e != nil {
+		err = fmt.Errorf("parse ExceptOptional err: %s", err)
+		return
+	} else {
+		in.Valid = true
+		in.Value = str
+		return
+	}
 }
 
 func (d *Decoder) remaining() int {
