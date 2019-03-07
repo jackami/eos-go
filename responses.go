@@ -463,6 +463,7 @@ type TrxReceipt struct {
 type TrxTrace struct {
 	Dummy        Varuint32        `json:"dummy"`
 	TrxId        Checksum256      `json:"id"`
+	BlockTime    BlockTimestamp   `json:"block_time"`
 	Receipt      TrxReceipt       `json:"receipt"`
 	Elapsed      int64            `json:"elapsed"`
 	NetUsage     uint64           `json:"net_usage"`
@@ -517,7 +518,7 @@ func (e ExceptOptional) MarshalJSON() ([]byte, error) {
 }
 
 type TrxTraceOptional struct {
-	Valid bool      `json:"valid"`
+	Valid bool `json:"valid"`
 	//Value *TrxTrace `json:"value"`
 }
 
@@ -534,8 +535,8 @@ type InlineTrace struct {
 }
 
 type EntryHeader struct {
-	BlockNum    uint32   	`json:"block_num"` // 8 + 32 + 4 + 1
-	Dummy		uint32		`json:"dummy"`
+	BlockNum    uint32      `json:"block_num"` // 4 + 4 + 32 + 4 + 1
+	Dummy       uint32      `json:"dummy"`
 	BlockId     Checksum256 `json:"block_id"`
 	PayloadSize uint64      `json:"payload_size"`
 	Version     uint8       `json:"version"`

@@ -27,11 +27,13 @@ func TestGetTransactionCustom(t *testing.T) {
 func TestReadTraceLog(t *testing.T) {
 
 	var maxNum int64 = 0
-	logFile, err := os.OpenFile("/data/state-data/trace_history.log", os.O_RDONLY, 0755)
+	//logFile, err := os.OpenFile("/data/state-data/trace_history.log", os.O_RDONLY, 0755)
+	logFile, err := os.OpenFile("/Users/eagle/Library/Application Support/eosio/nodeos/data/state-history/trace_history.log", os.O_RDONLY, 0755)
 	if err != nil {
 		t.Error("blocks.log file open failure.")
 	}
-	idxFile, err := os.OpenFile("/data/state-data/trace_history.index", os.O_RDONLY, 0755)
+	//idxFile, err := os.OpenFile("/data/state-data/trace_history.index", os.O_RDONLY, 0755)
+	idxFile, err := os.OpenFile("/Users/eagle/Library/Application Support/eosio/nodeos/data/state-history/trace_history.index", os.O_RDONLY, 0755)
 	if err != nil {
 		t.Error("blocks.index file open failure.")
 	}
@@ -54,7 +56,7 @@ func TestReadTraceLog(t *testing.T) {
 
 	t.Log(maxNum)
 
-	var num int64 = 71211 // 1227211
+	var num int64 = 234 // 1227211
 
 	offsetBuf := make([]byte, 16)
 	n, err := idxFile.ReadAt(offsetBuf, (num-1)*8)
@@ -108,7 +110,7 @@ func TestReadTraceLog(t *testing.T) {
 
 	bufStr, _ := json.Marshal(atraces)
 	t.Log(string(bufStr))
-	//t.Log(traces.TrxTraces[0].TrxTraces[0].ReceiptActionDigest.String())
+	t.Log(atraces.TrxTraces[0].BlockTime.UTC().String())
 	t.Log(header)
 	t.Log(hex.EncodeToString(traceBytes[8:40]))
 
