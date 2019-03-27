@@ -309,6 +309,25 @@ func (d *Decoder) Decode(v interface{}) (err error) {
 		rv.Set(reflect.ValueOf(exceptOpt))
 		return
 
+	case *TrxTraceOptional:
+		isValid, e := d.ReadBool()
+		if e != nil {
+			err = fmt.Errorf("decode: TrxTraceOptional isValid, %s", e)
+		}
+
+		trxTraceOpt := rv.Interface().(TrxTraceOptional)
+
+		if isValid {
+			e = d.readTrxTraceOptional(&trxTraceOpt, isValid)
+			if e != nil {
+				err = fmt.Errorf("decode: TrxTraceOptional value, %s", e)
+				return
+			}
+		}
+
+		rv.Set(reflect.ValueOf(trxTraceOpt))
+		return
+
 	case **OptionalProducerSchedule:
 		isPresent, e := d.ReadByte()
 		if e != nil {
@@ -904,6 +923,12 @@ func (d *Decoder) readExceptOptional(in *ExceptOptional) (err error) {
 		in.Value = str
 		return
 	}
+}
+
+func (d *Decoder) readTrxTraceOptional(in *TrxTraceOptional, isValid bool) (err error) {
+	in.Valid = isValid
+
+	return nil
 }
 
 func (d *Decoder) remaining() int {
