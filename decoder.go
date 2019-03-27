@@ -317,6 +317,8 @@ func (d *Decoder) Decode(v interface{}) (err error) {
 
 		trxTraceOpt := rv.Interface().(TrxTraceOptional)
 
+		trxTraceOpt.Valid = isValid
+
 		if isValid {
 			e = d.readTrxTraceOptional(&trxTraceOpt, isValid)
 			if e != nil {
